@@ -1,0 +1,38 @@
+#pragma kernel Simple
+
+#include "../../../Third Party/SimplexNoise.cginc"
+
+StructuredBuffer<float3> vertices;
+RWStructuredBuffer<float> heights;
+uint numVertices;
+
+float baseRoughness;
+int numLayers;
+float3 offset;
+float roughness;
+float persistence;
+float strength;
+
+[numthreads(512, 1, 1)]
+void Simple(uint id : SV_DispatchThreadID)
+{
+    if (id >= numVertices)
+    {
+        return;
+    }
+	
+    float3 pos = vertices[id];
+    float noiseValue = 0;
+    float frequency = baseRoughness;
+    float amplitude = 1;
+    
+    for (int i = 0; i < numLayers; i++)
+    {
+        float v = snoise(pos * frequency + offset);
+        noiseValue += (v + 1) * .5f * amplitude;
+        frequency *= roughness;
+        amplitude *= persistence;
+    }
+    
+    heights[id] = noiseValue * strength;
+}

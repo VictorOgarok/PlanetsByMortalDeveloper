@@ -1,0 +1,26 @@
+#pragma kernel CSMain
+
+StructuredBuffer<float> heights;
+RWStructuredBuffer<float> result;
+
+uint numVertices;
+int numLayers;
+
+[numthreads(512, 1, 1)]
+void CSMain(uint id : SV_DispatchThreadID)
+{
+    if (id >= numVertices)
+    {
+        return;
+    }
+    
+    float sum = 0;
+    
+    for (int i = 0; i < numLayers; i++)
+    {
+        sum += heights[i * numVertices + id];
+    }
+    
+    result[id] = sum / numLayers;
+    
+}

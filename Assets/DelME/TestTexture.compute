@@ -1,0 +1,20 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#include "../Scripts/Third Party/FractalNoise.cginc"
+#pragma kernel CSMain
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+
+[numthreads(512,512,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    
+    float4 first = { 1, 1, 1, 1 };
+    float4 second = { 1, 1, 1, 1 };
+    float4 third = { 1, 1, 1, 1 };
+    float4 params[3] = { first, second, third };
+
+    Result[id.xy] = continentNoise(id.xyz,params);
+}
